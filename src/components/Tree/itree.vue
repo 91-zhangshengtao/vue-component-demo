@@ -1,9 +1,10 @@
 <template>
-  <ul style="box-sizing:border-box;width:100%;display:flex;flex-direction: column;">
-    <li v-for="(data,index) in treedata" :key="index" style="padding:0px;" class="custom-tree-node flex-wrapper">
-      <div style="width:100%; margin:2px 0px;border:0.5px #ccc solid;flex-shrink:0;display:flex; justify-content: space-between;">
+  <ul style="width:100%;display:flex;flex-direction:column;">
+    <li v-for="(data,index) in treedata" :key="index" style="width:200px;margin:5px 0px;padding:0px;" class="custom-tree-node flex-wrapper">
+      <!-- :class="data.type == 'logicCondition' ? '' : 'ml20'" -->
+      <div style="border:0.5px #ccc solid;width:200px;flex-shrink:0;display:flex;justify-content: space-between;">
         <!-- 逻辑条件(并且或者) -->
-        <span v-if="data.type == 'logicCondition'">
+        <span v-if="data.type == 'logicCondition'" >
           <el-select v-model="data.operator" placeholder="请选择" style="width:80px;">
             <el-option
               v-for="(k,v) in logicType"
@@ -15,14 +16,14 @@
         </span>
 
         <!-- 关键字 -->
-        <span v-if="data.type !== 'logicCondition'" style="width:90%;">
+        <span v-if="data.type !== 'logicCondition'" >
           <!-- style="font-size:.6em" -->
-          <span style="font-size:12px">关键字:</span>
-          <el-input v-model="data.name" type="text" size="mini" style="width:70%;"/>
+          <span style="padding-left:15px;font-size:12px">关键字:</span>
+          <el-input v-model="data.name" type="text" size="mini" style="width:110px;"/>
         </span>
 
         <!-- 图标新增/删除操作 -->
-        <span>
+        <span style="display:flex;flex-direction:row;align-items:center;">
           <!-- + -->
           <el-dropdown trigger="click">
             <span class="el-dropdown-link">
@@ -45,18 +46,20 @@
           </el-button>
         </span>
       </div>
-      <my-tree v-if="data.children && data.children.length > 0" :is-one-level="false" :treedata="data.children"/>
+      <div v-if="data.children && data.children.length>0" style="width:200px;">
+        <my-tree2 :is-one-level="false" :treedata="data.children" />
+      </div>
     </li>
   </ul>
 </template>
 
 <script>
 export default {
-  name: 'MyTree',
+  name: 'MyTree2',
   props: {
     'is-one-level': {
       type: [Boolean],
-      default: true
+      default: false
     },
     treedata: {
       type: [Array],
@@ -172,17 +175,17 @@ export default {
     text-align:center;
   }
 }
+.ml20{
+  margin-left:20px;
+}
 .flex-wrapper{
   display:flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 .custom-tree-node{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:2px;
+  padding:2px;
 }
 
 
