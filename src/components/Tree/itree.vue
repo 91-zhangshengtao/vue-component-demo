@@ -1,11 +1,13 @@
 <template>
-  <ul style="width:100%;display:flex;flex-direction:column;">
-    <li v-for="(data,index) in treedata" :key="index" style="width:200px;margin:5px 0px;padding:0px;" class="custom-tree-node flex-wrapper">
-      <!-- :class="data.type == 'logicCondition' ? '' : 'ml20'" -->
-      <div style="border:0.5px #ccc solid;width:200px;flex-shrink:0;display:flex;justify-content: space-between;">
+  <!-- style="width:100%;display:flex;flex-direction:column;" -->
+  <ul class="onelevel-tree-wrapper">
+    <!-- style="width:200px;margin:5px 0px;padding:0px;" -->
+    <li v-for="(data,index) in treedata" :key="index" class="tree-item-wrapper">
+      <!-- style="border:0.5px #ccc solid;width:200px;flex-shrink:0;display:flex;justify-content: space-between;" -->
+      <div class="tree-item">
         <!-- 逻辑条件(并且或者) -->
-        <span v-if="data.type == 'logicCondition'" >
-          <el-select v-model="data.operator" placeholder="请选择" style="width:80px;">
+        <span v-if="data.type == 'logicCondition'" style="display:flex;">
+          <el-select v-model="data.operator" placeholder="请选择" style="width:50%;">
             <el-option
               v-for="(k,v) in logicType"
               :key="v"
@@ -16,14 +18,15 @@
         </span>
 
         <!-- 关键字 -->
-        <span v-if="data.type !== 'logicCondition'" >
-          <!-- style="font-size:.6em" -->
-          <span style="padding-left:15px;font-size:12px">关键字:</span>
-          <el-input v-model="data.name" type="text" size="mini" style="width:110px;"/>
+        <span v-if="data.type !== 'logicCondition'" style="display:flex;align-items:center;" >
+          <!-- style="padding-left:15px;font-size:12px" -->
+          <span class="key-word">关键字:</span>
+          <el-input v-model="data.name" type="text" size="mini" style="width:50%;"/>
         </span>
 
         <!-- 图标新增/删除操作 -->
-        <span style="display:flex;flex-direction:row;align-items:center;">
+        <!-- style="display:flex;flex-direction:row;align-items:center;" -->
+        <span class="handle-icon-con">
           <!-- + -->
           <el-dropdown trigger="click">
             <span class="el-dropdown-link">
@@ -46,7 +49,8 @@
           </el-button>
         </span>
       </div>
-      <div v-if="data.children && data.children.length>0" style="width:200px;">
+      <!-- style="width:200px;" -->
+      <div v-if="data.children && data.children.length>0" class="tree-children" >
         <my-tree2 :is-one-level="false" :treedata="data.children" />
       </div>
     </li>
@@ -178,14 +182,40 @@ export default {
 .ml20{
   margin-left:20px;
 }
-.flex-wrapper{
+/* */
+.onelevel-tree-wrapper{
+  width:100%;
   display:flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-.custom-tree-node{
-  padding:2px;
+  flex-direction:column;
+  .tree-item-wrapper{
+    width:200px;
+    margin:5px 0px;
+    padding:0px;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .tree-item{
+      border:0.5px #ccc solid;
+      width:200px;
+      flex-shrink:0;
+      display:flex;
+      justify-content: space-between;
+      .key-word{
+        padding-left:15px;
+        font-size:12px
+      }
+      .handle-icon-con{
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+      }
+    }
+    .tree-children{
+      width: 200px;
+    }
+  }
+  
 }
 
 

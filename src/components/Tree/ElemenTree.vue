@@ -1,57 +1,53 @@
 <template>
   <div class="tree-container">
     <!-- expressionClob: {obj} -->
-    <el-row style="10px 20px">
-      <el-col :span="12">
-        <el-tree :data="[expressionClob]" :expand-on-click-node="false" default-expand-all>
-          <span slot-scope="{node,data}" class="custom-tree-node">
-            <!-- 逻辑条件(并且或者) -->
-            <span v-if="data.type == 'logicCondition'">
-              <el-select v-model="data.operator" placeholder="请选择" style="width:80px;">
-                <el-option
-                  v-for="(k,v) in logicType"
-                  :key="v"
-                  :label="k"
-                  :value="v"
-                />
-              </el-select>
-            </span>
+    <el-tree :data="[expressionClob]" :expand-on-click-node="false" default-expand-all>
+      <span slot-scope="{node,data}" class="custom-tree-node">
+        <!-- 逻辑条件(并且或者) -->
+        <span v-if="data.type == 'logicCondition'" style="display:flex;align-items:center;">
+          <el-select v-model="data.operator" placeholder="请选择" style="width:50%;">
+            <el-option
+              v-for="(k,v) in logicType"
+              :key="v"
+              :label="k"
+              :value="v"
+            />
+          </el-select>
+        </span>
 
-            <!-- 关键字 -->
-            <span v-if="data.type !== 'logicCondition'">
-              <!-- style="font-size:.6em" -->
-              <span style="padding-left:15px;font-size:12px">关键字:</span>
-              <el-input v-model="data.name" type="text" size="mini" style="width:90px;"/>
-            </span>
+        <!-- 关键字 -->
+        <span v-if="data.type !== 'logicCondition'" style="display:flex;align-items:center;">
+          <!-- style="padding-left:15px;font-size:12px" -->
+          <span class="key-word">关键字:</span>
+          <el-input v-model="data.name" type="text" size="mini" style="width:58%;"/>
+        </span>
 
-            <!-- 图标新增/删除操作 -->
-            <span>
-              <!-- + -->
-              <el-dropdown trigger="click">
-                <span class="el-dropdown-link">
-                  <el-button v-if="data.type == 'logicCondition'" type="text" size="mini">
-                    <i class="el-icon-circle-plus"/>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-for="(v,k) in nodeType" :key="k" class="dropdown-item-tree" >
-                    <!-- 坑 -->
-                    <span class="dropdown-item-span" @click="AppendNode(data,k)">
-                      {{ v }}
-                    </span>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <!-- - -->
-              <el-button v-if="node.parent.parent" type="text" size="mini" @click="RemoveNode(node,data)">
-                <i class="el-icon-remove"/>
+        <!-- 图标新增/删除操作 -->
+        <span>
+          <!-- + -->
+          <el-dropdown trigger="click">
+            <span class="el-dropdown-link">
+              <el-button v-if="data.type == 'logicCondition'" type="text" size="mini">
+                <i class="el-icon-circle-plus"/>
               </el-button>
             </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(v,k) in nodeType" :key="k" class="dropdown-item-tree" >
+                <!-- 坑 -->
+                <span class="dropdown-item-span" @click="AppendNode(data,k)">
+                  {{ v }}
+                </span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <!-- - -->
+          <el-button v-if="node.parent.parent" type="text" size="mini" @click="RemoveNode(node,data)">
+            <i class="el-icon-remove"/>
+          </el-button>
+        </span>
 
-          </span>
-        </el-tree>
-      </el-col>
-    </el-row>
+      </span>
+    </el-tree>
 
   </div>
 </template>
@@ -170,6 +166,7 @@ export default {
 }
 
 .tree-container{
+  margin:20px 0px;
   .el-tree-node__content{
     height: 38px !important;
     &:hover{
@@ -192,27 +189,22 @@ export default {
   .el-tree-node__children{
      margin-top:2px;
   }
- 
-}
+  .key-word{
+    padding-left:15px;
+    font-size:12px
+  }
 
-  /* wrapper*/
-  // .custom-tree-node{
-  //     flex:1;
-  //     display:flex;
-  //     align-items:center;
-  //     justify-content:space-between;
-  //     font-size:14px;
-  //     padding:2px;
-  //     border:0.5px #ccc solid;
-  // }
-  
-  /* element */
-  // .el-tree-node > .el-tree-node__children{
-  //   margin-top:7px;
-  //   overflow:auto;
-  // }
-  // .el-tree-node__content:hover{
-  //   background-color:transparent;
-  // }
+}
+/* element */
+.el-tree-node.is-expanded>.el-tree-node__children {
+  margin-top:5px;
+}
+// .el-tree-node > .el-tree-node__children{
+//   margin-top:5px;
+//   overflow:auto;
+// }
+// .el-tree-node__content:hover{
+//   background-color:transparent;
+// }
 
 </style>

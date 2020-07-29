@@ -1,50 +1,54 @@
 <template>
-  <div class="tree">
+  <div class="app-container">
 
-    <h1>Element tree 纵向</h1>
-    <div>
-        <el-row style="margin:20px 20px;">
-          <el-col :span="12">
+        <h1>Element tree 纵向</h1>
+        <el-row>
+          <el-col :span="24">
             <etree :expression-clob="expressionClob" />
           </el-col>
-          <el-col :span="2" :pull="2">
+        </el-row>
+        <el-row>
+          <el-col :span="4">
             数据源：
           </el-col>
-          <el-col :span="10">
+          <el-col :span="20">
             {{ expressionClob }}
           </el-col>
         </el-row>
-    </div>
 
-    <h1>Tree self 纵向</h1>
-    <div>
+        <el-row><h1>Tree self 纵向</h1></el-row>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="24">
             <tree :treedata="treedata1" :is-one-level="true" />
           </el-col>
-          <el-col :span="2" :push="2">
+        </el-row>
+        <el-row>
+          <el-col :span="4">
             数据源：
           </el-col>
-          <el-col :span="10" :push="2">
+          <el-col :span="20">
             {{ treedata1 }}
           </el-col>
         </el-row>
-    </div>
    
    
 
-    <h1>Tree self 横向</h1>
+    <el-row><h1>Tree self 横向</h1></el-row>
     <div>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <div id="tree_wrapper">
               <itree style="padding-left:0px;" :treedata="treedata2" :is-one-level="true" />
             </div>
           </el-col>
         </el-row>
         <el-row>
-          数据源:
-          {{ treedata2 }}
+          <el-col>
+            数据源:
+          </el-col>
+          <el-col :span="20">
+            {{ treedata2 }}
+          </el-col>
         </el-row>
     </div>
     

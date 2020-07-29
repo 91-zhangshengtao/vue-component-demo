@@ -1,10 +1,12 @@
 <template>
-  <ul style="box-sizing:border-box;width:100%;display:flex;flex-direction: column;">
-    <li v-for="(data,index) in treedata" :key="index" style="padding:0px;" class="custom-tree-node flex-wrapper">
-      <div style="width:100%; margin:2px 0px;border:0.5px #ccc solid;flex-shrink:0;display:flex; justify-content: space-between;">
+  <!-- style="box-sizing:border-box;width:100%;display:flex;flex-direction: column;" -->
+  <ul class="onelevel-tree-wrapper">
+    <li v-for="(data,index) in treedata" :key="index" class="tree-item-wrapper">
+      <!-- style="width:100%; margin:2px 0px;border:0.5px #ccc solid;flex-shrink:0;display:flex; justify-content: space-between;" -->
+      <div class="tree-item">
         <!-- 逻辑条件(并且或者) -->
-        <span v-if="data.type == 'logicCondition'">
-          <el-select v-model="data.operator" placeholder="请选择" style="width:80px;">
+        <span v-if="data.type == 'logicCondition'" style="display:flex;align-items:center;">
+          <el-select v-model="data.operator" placeholder="请选择" style="width:50%;">
             <el-option
               v-for="(k,v) in logicType"
               :key="v"
@@ -15,10 +17,10 @@
         </span>
 
         <!-- 关键字 -->
-        <span v-if="data.type !== 'logicCondition'" style="width:90%;">
-          <!-- style="font-size:.6em" -->
-          <span style="font-size:12px">关键字:</span>
-          <el-input v-model="data.name" type="text" size="mini" style="width:70%;"/>
+        <span v-if="data.type !== 'logicCondition'" style="display:flex;align-items:center;">
+          <!-- style="font-size:12px" -->
+          <span class="key-word" >关键字:</span>
+          <el-input v-model="data.name" type="text" size="mini" style="width:58%;"/>
         </span>
 
         <!-- 图标新增/删除操作 -->
@@ -172,18 +174,34 @@ export default {
     text-align:center;
   }
 }
-.flex-wrapper{
+.onelevel-tree-wrapper{
+  box-sizing:border-box;
+  width:100%;
   display:flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.custom-tree-node{
+  .tree-item-wrapper{
     display:flex;
+    flex-direction: column;
     justify-content:space-between;
     align-items:center;
-    padding:2px;
+    padding:0px;
+    // align-items: flex-start;
+    .tree-item{
+      width:100%; 
+      margin:2px 0px;
+      border:0.5px #ccc solid;
+      flex-shrink:0;
+      display:flex; 
+      justify-content: space-between;
+      .key-word{
+        padding-left:15px;
+        font-size:12px
+      }
+    }
+  }
 }
+
+
 
 
 
