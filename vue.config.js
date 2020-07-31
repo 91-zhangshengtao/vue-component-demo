@@ -8,6 +8,7 @@ const pxtorem = require("postcss-pxtorem");
 //   remUnit: 37.5, // 换算的基数 默认100，如37.5 作用 设计稿上元素宽375px,最终页面会换算成 10rem
 // })
 module.exports = {
+  lintOnSave: false, // process.env.NODE_ENV === 'development'
 
   css: {
     loaderOptions: {
