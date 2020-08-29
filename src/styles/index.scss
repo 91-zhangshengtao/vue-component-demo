@@ -7,13 +7,14 @@
 // @media screen and (min-width:720px) and (max-width:749px){html{font-size:22.5px}}
 // @media screen and (min-width:750px) and (max-width:799px){html{font-size:23.5px}}
 // @media screen and (min-width:800px){html{font-size:16px}} // 25px
-
 html {
   height: 100%;
   box-sizing: border-box;
 }
 body {
   height: 100%;
+  padding:0;
+  margin:0;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -25,7 +26,7 @@ label {
 #app {
   font-size:16px;
   height: 100%;
-  overflow: auto;
+  // overflow: auto; //这里 不能设置auto不然 window.scroll监听有问题
 }
 
 //main-container全局样式

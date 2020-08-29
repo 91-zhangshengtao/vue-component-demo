@@ -1,9 +1,12 @@
 <template>
   <div id="app">
     <div id="nav">
-      <!-- <router-link to="/">Home</router-link> | -->
+      <router-link to="/">首页</router-link> |
+      <router-link to="/remtest">remDemo</router-link>
+      <router-link to="/scrolltest"> scrollDemo</router-link>
       <router-link to="/tree">Tree组件</router-link>
       <router-link to="/rsaTest">rsaTest组件</router-link>
+      <router-link to="/observe">响应式</router-link>
     </div>
     <router-view/>
   </div>
@@ -19,7 +22,8 @@
 }
 
 #nav {
-  padding: 30px;
+  /* padding: 30px; */
+  padding-top: 64px;
 }
 
 #nav a {
