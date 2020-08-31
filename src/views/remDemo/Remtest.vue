@@ -5,7 +5,7 @@
      </div>
      <div class="list-wrapper">
          <!-- <div class="list-content"> -->
-            <Scrollview @addList="addList">
+            <Scrollview @onLoadPage="onLoadPage" :isend="isend" :readyToLoad="readyToLoad" >
                 <div slot="item">
                     <div v-for="(item,index) in listData" :key="index" class="item-content">
                         {{  `滚动${item}` }}
@@ -32,17 +32,34 @@ export default {
   },
   data() {
     return {
-        listData:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+        listData:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+        isend: false, // 标识页面是否可以滚动
+        readyToLoad: true, // 防抖
+        page: 0
     }
   },
   methods:{
-      addList(){
-          const t_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-          const n_list = t_list.map(item=>{
-              return `add${this.listData.length}`
-          })
-          this.listData.push(...n_list)
+      onLoadPage(){
+        this.page++;
+        // 最多滚动3页3次
+        if (this.page > 3) {
+            this.isend=true
+        } else {
+            this.fetchData(this.page)
+        }
       },
+      fetchData(page){
+        const t_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+        
+        this.readyToLoad= false
+        setTimeout(() => {
+            const n_list = t_list.map(item=>{
+                return `add${this.listData.length}`
+            })
+            this.listData.push(...n_list)
+            this.readyToLoad= true
+        }, 3000)
+      }
 
      
   },

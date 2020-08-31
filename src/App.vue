@@ -4,6 +4,7 @@
       <router-link to="/">首页</router-link> |
       <router-link to="/remtest">remDemo</router-link>
       <router-link to="/scrolltest"> scrollDemo</router-link>
+      <router-link to="/echarttest"> EchartDemo</router-link>
       <router-link to="/tree">Tree组件</router-link>
       <router-link to="/rsaTest">rsaTest组件</router-link>
       <router-link to="/observe">响应式</router-link>

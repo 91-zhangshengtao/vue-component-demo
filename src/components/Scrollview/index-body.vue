@@ -1,11 +1,14 @@
 <template>
     <div class="list-content">
-            <slot name="item"> </slot> 
-            <!-- <div v-for="(item,index) in listData" :key="index" class="item-content">
+            <div v-show="readyToLoad">
+               <slot name="item" > </slot> 
+                <!-- <div v-for="(item,index) in listData" :key="index" class="item-content">
                     {{  `滚动${item}` }}
-            </div> -->
+                 </div> -->
+            </div>
+           
             <div @click="onLoadPage()" class="more">
-                加载更多
+                {{isend ? '已加载完成' : '加载更多'}}
             </div>
      </div>
 
@@ -21,6 +24,16 @@ export default {
         
     }
   },
+  props:{
+    isend:{
+      type: [Boolean],
+      default: false
+    },
+    readyToLoad:{
+      type: [Boolean],
+      default: true
+    }
+  },
   methods:{
     //   addList(){
     //       const t_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
@@ -31,12 +44,17 @@ export default {
     //   },
 
     onLoadPage(){
+       if(this.isend){
+            return
+        }
+        if(!this.readyToLoad){
+            return
+        }
         // 滚动加载
         // scrollTop + clientHeight >= scrollHeight
         let clientHeight = document.documentElement.clientHeight;
         let scrollHeight = document.body.scrollHeight;
         let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
         let proLoadDis = 5; // 预设值
        
         console.log('scrollTop:',scrollTop);
@@ -44,7 +62,7 @@ export default {
         console.log('scrollHeight:',scrollHeight);
              
         if ((scrollTop + clientHeight) >= (scrollHeight - proLoadDis)) {
-            this.$emit('addList')
+            this.$emit('onLoadPage')
         }
     }
   },

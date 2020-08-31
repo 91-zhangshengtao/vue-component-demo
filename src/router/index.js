@@ -23,6 +23,12 @@ Vue.use(VueRouter)
     name: 'Scrolldemo',
     component: () => import(/* webpackChunkName: "scrolltest" */ '../views/scrollDemo/Scrolltest.vue')
   },
+  // echart
+  {
+    path:'/echarttest',
+    name: 'Echartdemo',
+    component: () => import(/* webpackChunkName: "echarttest" */ '../views/echartDemo/Echart.vue')
+  },
   {
     path: '/tree',
     name: 'Tree',

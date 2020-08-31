@@ -10,8 +10,8 @@
     var docEl = document.documentElement;
 
     function setRemUint(){
-        var rem = docEl.clientWidth / 10;
-        docEl.style.fontSize = rem + 'px';
+        var fontSize = docEl.clientWidth / 10;
+        docEl.style.fontSize = fontSize + 'px';
     }
 
     setRemUint();
