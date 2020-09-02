@@ -70,25 +70,27 @@ export default {
   data() {
     return {
        // 逻辑规则tree结构
-      expressionClob: {
-        operator: 'OR',
-        type: 'logicCondition',
-        activeChecked: false,
-        name: '全部',
-        children: [
-          {
-            operator: 'AND',
-            type: 'logicCondition',
-            activeChecked: false,
-            name: '组合1',
-            children: [
-              // { type: 'nodeCondition', name: '1' },
-              { type: 'nodeCondition', name: '11' }
-            ]
-          },
-          { type: 'nodeCondition', name: '22' }
-        ]
-      },
+      expressionClob: [
+        {
+          operator: 'OR',
+          type: 'logicCondition',
+          activeChecked: false,
+          name: '全部',
+          // children: [
+          //   {
+          //     operator: 'AND',
+          //     type: 'logicCondition',
+          //     activeChecked: false,
+          //     name: '组合1',
+          //     children: [
+          //       // { type: 'nodeCondition', name: '1' },
+          //       { type: 'nodeCondition', name: '11' }
+          //     ]
+          //   },
+          //   { type: 'nodeCondition', name: '22' }
+          // ]
+        }
+      ],
       treedata1: [
         {
           operator: 'OR',
@@ -135,7 +137,27 @@ export default {
     }
   },
   created() {
-
+    this.expressionClob = [
+        {
+          operator: 'OR',
+          type: 'logicCondition',
+          activeChecked: false,
+          name: '全部',
+          children: [
+            {
+              operator: 'AND',
+              type: 'logicCondition',
+              activeChecked: false,
+              name: '组合1',
+              children: [
+                // { type: 'nodeCondition', name: '1' },
+                { type: 'nodeCondition', name: '11' }
+              ]
+            },
+            { type: 'nodeCondition', name: '22' }
+          ]
+        }
+      ]
   }
 }
 </script>

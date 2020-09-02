@@ -9,6 +9,13 @@ import './styles/index.scss'
 import 'element-ui/lib/theme-chalk/index.css'
 
 
+// moment
+import moment from 'moment'
+import 'moment/locale/zh-cn' // 手动引入中文包
+moment.locale('zh-cn') // 设置语言为中文
+console.log('locale:',moment.locale()) // zh-cn
+console.log('date:',moment().format('LL')) // 2020年8月17日
+
 
 Vue.use(Element)
 

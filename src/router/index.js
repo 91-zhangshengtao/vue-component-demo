@@ -29,13 +29,14 @@ Vue.use(VueRouter)
     name: 'Echartdemo',
     component: () => import(/* webpackChunkName: "echarttest" */ '../views/echartDemo/Echart.vue')
   },
+  // tree
   {
     path: '/tree',
     name: 'Tree',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "tree" */ '../views/Tree.vue')
+    component: () => import(/* webpackChunkName: "Tree" */ '../views/treeDemo/Tree.vue')
   },
   {
     path:'/rsatest',

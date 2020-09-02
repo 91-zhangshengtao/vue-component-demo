@@ -1,6 +1,9 @@
 // 配置文件
 // const pxtorem = require("postcss-pxtorem"); // rem(不手动方式)
 const path = require('path');
+const webpack = require('webpack')
+const resolve = dir => path.join(__dirname, dir);
+
 
 module.exports = {
   lintOnSave: false, // process.env.NODE_ENV === 'development'
@@ -17,25 +20,53 @@ module.exports = {
   //     }
   //   },
   // },
-
-  // 配置别名
-  configureWebpack: config => {
-    if (process.env.NODE_ENV === 'production') {
-      // 为生产环境修改配置...
-    } else {
-      // 为开发环境修改配置...
-    }
-    return {
-        resolve: {
-            alias: {
-                '@components': path.resolve(__dirname, './src/components/'),
-                '@utils': path.resolve(__dirname, './src/utils/'),
-                '@styles': path.resolve(__dirname, './src/styles/'),
-                '@src': path.resolve(__dirname, './src/')
-            }
-        }
-    }
+  chainWebpack: config => {
+    //添加别名
+    config.resolve.alias
+      .set("@components", resolve('src/components/'))
+      .set("@utils", resolve('src/utils/'))
+      .set("@styles", resolve('src/styles/'))
+      .set("@src", resolve('src/'))
   },
+  configureWebpack: config=>{ 
+    const plugins = []
+    // plugins.push(new webpack.IgnorePlugin(/\.\/lib/, /echarts/)) // \/map\/json\/|\/lib
+    plugins.push(new webpack.IgnorePlugin(/\.\/locale/, /moment/)) // \/map\/json\/|\/lib
+
+    config.plugins = [...config.plugins, ...plugins]
+
+    // return {
+    //   resolve: {
+    //     extensions: ['.js', '.vue', '.json'],
+    //     alias: {
+    //       '@components': path.resolve(__dirname, './src/components/'),
+    //       '@utils': path.resolve(__dirname, './src/utils/'),
+    //       '@styles': path.resolve(__dirname, './src/styles/'),
+    //       '@src': path.resolve(__dirname, './src/')
+    //     }
+    //   }
+    // }
+  },
+  // pluginOptions:{
+  // }
+  
+  // configureWebpack: config => {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     // 为生产环境修改配置...
+  //   } else {
+  //     // 为开发环境修改配置...
+  //   }
+  //   return {
+  //       resolve: {
+  //           alias: {
+  //               '@components': path.resolve(__dirname, './src/components/'),
+  //               '@utils': path.resolve(__dirname, './src/utils/'),
+  //               '@styles': path.resolve(__dirname, './src/styles/'),
+  //               '@src': path.resolve(__dirname, './src/')
+  //           }
+  //       } 
+  //   }
+  // },
 }
 
 // module.exports = {

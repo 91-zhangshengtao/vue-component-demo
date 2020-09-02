@@ -7,7 +7,8 @@
     </el-row>
       <el-row>
         <el-col>
-            <el-button type="primary" @click="getFetch">点击请求</el-button>
+            <el-button type="primary" @click="getFetch(true)">点击请求1</el-button>
+            <el-button type="primary" @click="getFetch(false)">点击请求2</el-button>
         </el-col>
     </el-row>
     <el-row>
@@ -43,19 +44,32 @@ export default {
     }
   },
   methods:{
-      getFetch(){
+      getFetch(flag){
           console.log('api');
-          
-          this.chartData = Object.assign({},{
-                legendData: ['板块1','key1','key2','key3'],
+          if(flag){
+              this.chartData = Object.assign({},{
+                legendData: ['板块1','key1','key2','key33'],
                 XData: ['1号','2号','3号','4号'],
                 seriesData:[
                     {name:'板块1',type:'bar',data:[1,2,3,4]},
                     {name:'key1',type:'line',data:[10,20,30,40]},
                     {name:'key2',type:'line',data:[1,50,10,20]},
-                    {name:'key3',type:'line',data:[40,30,20,10]}
+                    {name:'key33',type:'line',data:[40,30,20,10]}
                 ]
-          })
+            })
+          }else{
+              this.chartData = Object.assign({},{
+                legendData: ['板块1','key11','key33'],
+                XData: ['1号','2号','3号','4号'],
+                seriesData:[
+                    {name:'板块1',type:'bar',data:[1,2,3,4]},
+                    {name:'key11',type:'line',data:[10,20,30,40]},
+                    // {name:'key2',type:'line',data:[1,50,10,20]},
+                    {name:'key33',type:'line',data:[40,30,20,10]}
+                ]
+            })
+          }
+          
       },
       onReadyLoad(){
         console.log('scroll');
@@ -82,13 +96,14 @@ export default {
       window.addEventListener('scroll', this.handleScroll);
       setTimeout(()=>{
         this.chartData = {
-            legendData: ['板块1','key1','key2'],
-            XData: ['1号','2号','3号'],
-            seriesData:[
-                {name:'板块1',type:'bar',data:[1,2,3]},
-                {name:'key1',type:'line',data:[10,20,30]},
-                {name:'key2',type:'line',data:[1,50,10]}
-            ]
+            legendData: ['板块1','key1','key2','key3'],
+                XData: ['1号','2号','3号','4号'],
+                seriesData:[
+                    {name:'板块1',type:'bar',data:[1,2,3,4]},
+                    {name:'key1',type:'line',data:[10,20,30,40]},
+                    {name:'key2',type:'line',data:[1,50,10,20]},
+                    {name:'key3',type:'line',data:[40,30,20,10]}
+                ]
         }
       },1000)
   },

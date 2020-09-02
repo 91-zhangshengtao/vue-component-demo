@@ -1,7 +1,7 @@
 <template>
   <div class="tree-container">
-    <!-- expressionClob: {obj} -->
-    <el-tree :data="[expressionClob]" :expand-on-click-node="false" default-expand-all>
+    <!-- expressionClob: [obj] -->
+    <el-tree :data="expressionClob" :expand-on-click-node="false" default-expand-all>
       <span slot-scope="{node,data}" class="custom-tree-node">
         <!-- 逻辑条件(并且或者) -->
         <span v-if="data.type == 'logicCondition'" style="display:flex;align-items:center;">
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { log } from 'util'
 // import icons from './requireIcons'
 // import clipboard from '@/utils/clipboard'
 
@@ -60,9 +61,9 @@ export default {
   name: 'Tree',
   props: {
     expressionClob: {
-      type: [Object],
+      type: [Array],
       default: () => {
-        return {
+        return [{
           operator: 'OR',
           type: 'logicCondition',
           activeChecked: false,
@@ -79,7 +80,7 @@ export default {
             },
             { type: 'nodeCondition', name: '22' }
           ]
-        }
+        }]
       }
     }
   },
@@ -99,6 +100,9 @@ export default {
       if (!data.children) {
         this.$set(data, 'children', [])
       }
+      // if (!data.children) {
+      //  data.children = []
+      // }
       // condition时下拉数据源里的
       if (type == 'logicCondition') {
         data.children.push({
@@ -134,7 +138,8 @@ export default {
       const children = parent.data.children || parent.data
 
       const length = children.length
-      for (let i = 1; i < length; i++) {
+      for (let i = 0; i < length; i++) {
+        console.log('children[i], data：',children[i], data)
         if (children[i] == data) {
           if (i == 0) {
             children.shift() // 删除第一个

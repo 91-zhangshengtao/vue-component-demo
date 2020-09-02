@@ -4,26 +4,47 @@
 </template>
 
 <script>
-import echarts from 'echarts'
+// import echarts from 'echarts'
+
+// 按需引入
+import echarts from 'echarts/lib/echarts'
+require('echarts/lib/chart/map') //地图
+require('echarts/lib/chart/scatter') //散点
+require('echarts/lib/chart/effectScatter') //特殊点
+
+require('echarts/lib/component/tooltip')//提示框组件
+require('echarts/lib/component/title'), //标题组件
+require('echarts/lib/component/toolbox') //toolbox组件
+require('echarts/lib/component/legend') //legend组件
+require('echarts/lib/component/visualMap') //visualMap组件
+require('echarts/lib/component/geo') //geo组件
+
+// ----------------
+//import echarts from 'echarts'
 import china from 'echarts/map/json/china.json'
 echarts.registerMap('china', china)
+// ------------------
+import resize from './mixins/resize'
 import {getMockdata, getMockToolData } from './mock_map_data.js'
 export default {
   name: 'Mapchart',
+  mixins: [resize],
   components: {
+  },
+  beforeDestroy() {
+		if (!this.chart) {
+			return
+		}
+		this.chart.dispose()
+		this.chart = null
   },
   props:{
 	  chartData:{
 		  type:[Object],
 		  default:()=>{
 			return {
-				legendData: ['板块1','key1','key2'],
-				XData: ['1号','2号','3号'],
-				seriesData:[
-					{name:'板块1',type:'bar',data:[1,2,3]},
-					{name:'key1',type:'line',data:[10,20,30]},
-					{name:'key2',type:'line',data:[1,50,10]}
-				]
+				 typeData: getMockdata(), // series type的data
+                 toolTipData: getMockToolData() // hover里需要遍历的
 			  }
 		   }
 	  }
@@ -47,9 +68,12 @@ export default {
 	initChart(){
 		this.$nextTick(function(){
 			/*
-				legendData:  ['板块1','key1','key2'] 
-				XData:         ['1号','2号','3号']
-				seriesData:         [{name:'板块1',type:'bar',data:['1','2','3']}]
+                typeData = getMockdata() // series type的data
+                // [{name:"北京",value:396},{name:"天津",value:131}]
+                
+                toolTipData = getMockToolData() // hover里需要遍历的
+				// [{name:"北京",value:[{name:"确诊",value:396},{name:"疑似",value:114},{name:"死亡",value:4}]}]
+				
 			*/
             this.chart = echarts.init(this.$refs[`map-chart`])
             let geoCoordMap = {}
@@ -88,9 +112,11 @@ export default {
 		let subname_fontSize = 15
 		let name_fontSize = 18
 		let mapName = 'china'
-		let data = getMockdata() // [{name:"北京",value:396},{name:"天津",value:131}]
+		 let data = this.chartData.typeData// series type的data
+        // [{name:"北京",value:396},{name:"天津",value:131}]
+
+        let toolTipData = this.chartData.toolTipData // hover里需要遍历的
         // [{name:"北京",value:[{name:"确诊",value:396},{name:"疑似",value:114},{name:"死亡",value:4}]}]
-        let toolTipData = getMockToolData()
 
         let max = 6000
 		let min = 9 // todo 
@@ -125,27 +151,35 @@ export default {
 					fontFamily:name_fontFamily // sub-title css
 				}
 			},
+			// hover
 			tooltip: {
 				trigger: 'item',
 				formatter: function(params) {
-					if (typeof(params.value)[2] == "undefined") {
+					// console.log('params.value：',params.value, typeof(params.value[2]) === 'undefined')
+					
+					if (typeof(params.value[2]) === 'undefined') {
 						var toolTiphtml = ''
-						for(var i = 0;i<toolTipData.length;i++){
-							if(params.name==toolTipData[i].name){
-								toolTiphtml += toolTipData[i].name+':<br>'
-								for(var j = 0;j<toolTipData[i].value.length;j++){
-									toolTiphtml+=toolTipData[i].value[j].name+':'+toolTipData[i].value[j].value+"<br>"
+
+						if(!params.value){
+							toolTiphtml = params.name+'<br>'+'无数据'
+						}else{
+							for(var i = 0;i<toolTipData.length;i++){
+								if(params.name==toolTipData[i].name){
+									toolTiphtml += toolTipData[i].name+'<br>'
+									for(var j = 0;j<toolTipData[i].value.length;j++){
+										toolTiphtml+=toolTipData[i].value[j].name+':'+toolTipData[i].value[j].value+"<br>"
+									}
 								}
 							}
+							// console.log(toolTiphtml)
+							// console.log(convertData(data))
 						}
-						// console.log(toolTiphtml)
-						// console.log(convertData(data))
 						return toolTiphtml;
 					} else {
 						var toolTiphtml = ''
 						for(var i = 0;i<toolTipData.length;i++){
 							if(params.name==toolTipData[i].name){
-								toolTiphtml += toolTipData[i].name+':<br>'
+								toolTiphtml += toolTipData[i].name+'<br>'
 								for(var j = 0;j<toolTipData[i].value.length;j++){
 									toolTiphtml+=toolTipData[i].value[j].name+':'+toolTipData[i].value[j].value+"<br>"
 								}
@@ -169,7 +203,7 @@ export default {
 			visualMap: {
 				show: true,
 				min: 1,
-				max: 1300,
+				max: 1000,
 				left: 'left',
 				top: 'bottom',
 				text: ['高', '低'], // 文本，默认为数值文本
@@ -245,14 +279,26 @@ export default {
 						    // console.log(d_val);
 							d_val = 11
 						}
+						if(d_val < 1 && d_val > 0){
+							d_val = 1
+						}
 						return d_val
 						
 						
 					},
 					label: {
 						normal: {
-							formatter: '{b}',
-							position: 'right',
+							formatter: function(params){ // 改变文字位置
+                                // console.log(params);
+                                if(params.name == '香港'){
+                                    return params.name
+                                }else if(params.name == '澳门'){
+									return "\r\n"+ params.name
+								}else{
+                                	return params.name
+                                }
+                            },
+							position:'bottom',
 							show: true // 显示散点(点+文字)
 						},
 						emphasis: {
@@ -348,6 +394,9 @@ export default {
 						if(d_val>15){
 						    // console.log(d_val);
 							d_val = 15
+						}
+						if(d_val < 1 && d_val > 0){
+							d_val = 1
 						}
 						return d_val
 					},
