@@ -96,12 +96,12 @@ export const testAES = () => {
 		name:'zhangshan',
 		age: 18,
 		action: true,
-    defaultFileList: [],
-    beforeUpload: [1,2,3],
-    withCredentials: false,
-    accept: false,
-    multiple: true,
-    drag: false
+		defaultFileList: [],
+		beforeUpload: [1,2,3],
+		withCredentials: false,
+		accept: false,
+		multiple: true,
+		drag: false
           
 	}
 	/*

@@ -6,7 +6,7 @@
 //     html.style.fontSize = fontSize + 'px';
 // });
 
-// (function(){
+(function(){
     var docEl = document.documentElement;
 
     function setRemUint(){
@@ -17,4 +17,4 @@
     setRemUint();
 
     window.addEventListener('resize', setRemUint);
-// })()
+})()

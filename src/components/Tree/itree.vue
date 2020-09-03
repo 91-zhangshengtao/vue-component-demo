@@ -196,7 +196,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    .tree-item{
+    .tree-item{ // 横向需要改变方向(另外需定宽 与 children一致)
       border:0.5px #ccc solid;
       width:200px;
       flex-shrink:0;
@@ -212,7 +212,7 @@ export default {
         align-items:center;
       }
     }
-    .tree-children{
+    .tree-children{ // children定宽
       width: 200px;
     }
   }
