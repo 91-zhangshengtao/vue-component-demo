@@ -4,8 +4,8 @@
 </template>
 
 <script>
-import { testAES } from '../utils/aes'
-import { testRSA } from '../utils/rsa'
+import { testAES } from '@utils/aes'
+import { testRSA } from '@utils/rsa'
 export default {
   name: 'Rsatrest',
   components: {

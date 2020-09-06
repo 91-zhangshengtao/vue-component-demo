@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-const RsatestComponent = () => import('../views/Rsatest.vue')
-const ObserveComponent  = () => import('../views/Observe.vue')
+const Home = () => import(/* webpackChunkName: "home" */'../views/Home.vue')
+const RsatestComponent = () => import(/* webpackChunkName: "rsatest" */'../views/Rsatest.vue')
+const ObserveComponent = () => import(/* webpackChunkName: "observetest" */'../views/Observe.vue')
 Vue.use(VueRouter)
 
-  const routes = [
+const routes = [
   {
     path: '/',
     name: 'Home',
@@ -15,19 +15,19 @@ Vue.use(VueRouter)
   {
     path:'/remtest',
     name: 'Remdemo',
-    component: () => import(/* webpackChunkName: "remtest" */ '../views/remDemo/Remtest.vue')
+    component: () => import(/* webpackChunkName: "remtest" */'../views/remDemo/Remtest.vue')
   },
   // scroll
   {
     path:'/scrolltest',
     name: 'Scrolldemo',
-    component: () => import(/* webpackChunkName: "scrolltest" */ '../views/scrollDemo/Scrolltest.vue')
+    component: () => import(/* webpackChunkName: "scrolltest" */'../views/scrollDemo/Scrolltest.vue')
   },
   // echart
   {
     path:'/echarttest',
     name: 'Echartdemo',
-    component: () => import(/* webpackChunkName: "echarttest" */ '../views/echartDemo/Echart.vue')
+    component: () => import(/* webpackChunkName: "echarttest" */'../views/echartDemo/Echart.vue')
   },
   // tree
   {
@@ -36,7 +36,7 @@ Vue.use(VueRouter)
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "Tree" */ '../views/treeDemo/Tree.vue')
+    component: () => import(/* webpackChunkName: "Tree" */'../views/treeDemo/Tree.vue')
   },
   {
     path:'/rsatest',

@@ -1,12 +1,51 @@
 // 配置文件
 // const pxtorem = require("postcss-pxtorem"); // rem(不手动方式)
-const path = require('path');
+const path = require('path')
 const webpack = require('webpack')
-const resolve = dir => path.join(__dirname, dir);
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const { getGenerateEntries } = require('./mutiple-entry')
+
+const resolve = dir => path.join(__dirname, dir) // resolve方法
+const generateEntries = getGenerateEntries()
+const outputDir = getOutPutDir() // 出口根路径
+const IS_DEV = process.env.NODE_ENV === 'development'
+
+// console.log('mutiple-generateEntries:',generateEntries)
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV)
+console.log('process.env.VUE_APP_BASIC_API：', process.env.VUE_APP_BASIC_API);
 
 
+// // 项目APP配置文件
+// const appConfig = require('./app.config')
+// // 多入口config
+// const mulPagesConfig = getMulPagesConfig()
+// const pageDir = mulPagesConfig.outputDir.split('/')[1] ?  mulPagesConfig.outputDir.split('/')[1] : ''
+// console.log('mulPagesConfig, pageDir:', mulPagesConfig, pageDir)
+
+
+function getOutPutDir(){
+  let outputDir = 'dist'
+ if(process.env.NODE_ENV === 'production'){
+  outputDir = 'dist-prod'
+ }else if(process.env.NODE_ENV === 'sit'){
+  outputDir = 'dist-sit'
+ }else{
+  //
+ }
+ return outputDir
+}
+
+/*  */
 module.exports = {
+  publicPath: IS_DEV ? "/": "/", // 访问根目录
+  outputDir: outputDir, // 'dist' // vue-cli-service build 时出口文件
+  assetsDir: 'assets', // 放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录
   lintOnSave: false, // process.env.NODE_ENV === 'development'
+  // runtimeCompiler: true, // 运行时版本是否需要编译
+
+  // 多入口
+  pages: generateEntries,
   // css: {
   //   loaderOptions: {
   //     postcss: {
@@ -20,53 +59,218 @@ module.exports = {
   //     }
   //   },
   // },
+  devServer: {
+    port: 8080,
+    progress: true,  // 显示打包的进度条
+    contentBase: resolve('dist'),  // 根目录
+    open: true,  // 自动打开浏览器
+    compress: true,  // 启动 gzip 压缩
+    hot: true, //hot
+    // 设置代理
+    proxy: {
+      // 将本地 /api2/xxx 代理到 localhost:3000/xxx
+      '/api_dev': {
+        target: 'http://rap2api.taobao.org/app/mock/23080/resources/search',
+        changeOrigin: true,
+        pathRewrite: {
+            '/api_dev': ''
+        }
+      },
+      '/api_sit': {
+          target: 'http://rap2api.taobao.org/app/mock/23080/resources/search',
+          changeOrigin: true,
+          pathRewrite: {
+              '/api_sit': ''
+          }
+      }
+    }
+  },
   chainWebpack: config => {
-    //添加别名
+    /* delete something */
+    Object.keys(generateEntries).forEach((entry) => {
+      config.plugins.delete(`preload-${entry}`)
+      config.plugins.delete(`prefetch-${entry}`)
+    })
+    /* 添加别名 */
     config.resolve.alias
       .set("@components", resolve('src/components/'))
       .set("@utils", resolve('src/utils/'))
       .set("@styles", resolve('src/styles/'))
       .set("@src", resolve('src/'))
+    /* output.filename  js[contenthash:8] */
+    if (IS_DEV) {
+      config.output
+        .filename(bundle => {
+          console.log('bundle.chunk.name:', bundle.chunk.name)
+          return 'assets/js/[name].js'
+        })
+    }else{
+      config.output
+        .filename(bundle => {
+          console.log('bundle.chunk.name:', bundle.chunk.name)
+          return 'assets/js/[name].[contenthash:8].js'
+        })
+    }
   },
   configureWebpack: config=>{ 
-    const plugins = []
-    // plugins.push(new webpack.IgnorePlugin(/\.\/lib/, /echarts/)) // \/map\/json\/|\/lib
-    plugins.push(new webpack.IgnorePlugin(/\.\/locale/, /moment/)) // \/map\/json\/|\/lib
+    console.log('config.optimization.splitChunks：',config.optimization.splitChunks);
+    
+    if (IS_DEV) { // dev
+      config.devtool = 'cheap-module-eval-source-map'
+      Object.assign(config, {
+        plugins:[
+          ...config.plugins,
+          new MiniCssExtractPlugin({
+             filename: 'assets/css/[name].css'
+          })
+        ]
+      })
+    } else { 
+      // 非dev
+      config.devtool = 'source-map'
+      Object.assign(config, {
+        plugins:[
+          ...config.plugins,
+          new MiniCssExtractPlugin({
+             filename: 'assets/css/[name].[contentHash:8].css'
+          })
+        ]
+      })
+    }
 
-    config.plugins = [...config.plugins, ...plugins]
-
-    // return {
-    //   resolve: {
-    //     extensions: ['.js', '.vue', '.json'],
-    //     alias: {
-    //       '@components': path.resolve(__dirname, './src/components/'),
-    //       '@utils': path.resolve(__dirname, './src/utils/'),
-    //       '@styles': path.resolve(__dirname, './src/styles/'),
-    //       '@src': path.resolve(__dirname, './src/')
-    //     }
-    //   }
-    // }
+    Object.assign(config, {
+      plugins:[
+        ...config.plugins,
+        new webpack.IgnorePlugin(/\.\/locale/, /moment/),
+        new CopyWebpackPlugin({
+          patterns:[
+            { from: path.resolve(__dirname,'src/addImg'), to: path.resolve(__dirname, outputDir, 'addImg'), force: true }
+          ]
+        }),
+        // new TerserPlugin({
+        //   // cache: true,
+        //   parallel: true,
+        //   sourceMap: false, // Must be set to true if using source-maps in production
+        //   terserOptions: {
+        //     compress: {
+        //       warnings: false,
+        //       drop_console: true,
+        //       drop_debugger: true,
+        //     },
+        //   },
+        // })
+      ],
+      optimization: {
+        ...config.optimization,
+        // 分割代码块
+        splitChunks: {
+            // ...config.optimization.splitChunks,
+            /**
+             * initial 入口chunk，对于异步导入的文件不处理
+                async 异步chunk，只对异步导入的文件处理
+                all 全部chunk
+             */
+            chunks: "all",
+            // 缓存分组
+            cacheGroups: {
+                // ...config.optimization.splitChunks.cacheGroups,
+                // vendors:{
+                //   name: 'chunk-vendors',
+                //   test: /[\\\/]node_modules[\\\/]/,
+                //   priority: -10,
+                //   chunks: 'initial' 
+                // },
+                // common:{ 
+                //   name: 'chunk-common',
+                //   minChunks: 2,
+                //   priority: -20,
+                //   chunks: 'initial',
+                //   reuseExistingChunk: true 
+                // },
+                vendors: {
+                  name: "chunk-vendors",
+                  test: /[\\\/]node_modules[\\\/]/,
+                  priority: 10,
+                  chunks: "initial"// 只打包初始时依赖的第三方
+                },
+                elementUI: {
+                  name: "chunk-elementUI",// 单独将 elementUI 拆包
+                  priority: 20,// 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+                  test: /[\\\/]node_modules[\\\/]element-ui[\\\/]/
+                },
+                echarts: {
+                  name: "chunk-echarts",// 单独将 elementUI 拆包
+                  priority: 20,// 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+                  test: /[\\\/]node_modules[\\\/]echarts[\\\/]/
+                },
+                commons: {
+                  name: "chunk-comomns",
+                  // test: resolve("src/components"),// 可自定义拓展你的规则
+                  minChunks: 2,// 最小共用次数
+                  priority: 5,
+                  reuseExistingChunk: true
+                }
+                  
+                  
+                // commons: {
+                //   test: /node_modules/,
+                //   name: 'vendor',
+                //   chunks: 'initial',
+                //   minSize: 1
+                // },
+                // // 第三方模块
+                // vendor: {
+                //   chunks: 'all',
+                //     name: 'chunk-vendors', // chunk 名称
+                //     priority: 100, // 权限更高，优先抽离，重要！！！
+                //     test: /(vue|vue-router|vuex)/,
+                // },
+                // echarts: {
+                //   chunks: 'all',
+                //   name: 'chunk-echarts', // split elementUI into a single package
+                //   priority: 100, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                //   test: /echarts/ // in order to adapt to cnpm
+                // },
+                // elementUI: {
+                //   chunks: 'all',
+                //   name: 'chunk-elementUI', // split elementUI into a single package
+                //   priority: 100, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                //   test: /element-ui/ // in order to adapt to cnpm
+                // },
+                // 公共的模块
+                
+            }
+        }
+      }
+      // output:{
+      //   ...config.output,
+      //   filename: `static/js/[name].[chunkhash].${version}.js`,
+      //   chunkFilename: `static/js/[name].[chunkhash].${version}.js`
+      // },
+     
+      // optimization,
+      // plugins:[
+      //   ...config.plugins,
+      //   ...Object.keys(library).map(name => {
+      //     return new webpack.DllReferencePlugin({
+      //       context: process.cwd(),
+      //       manifest: require(`./libs/package/json/${name}.manifest.json`),
+      //     })
+      //   }),
+      //   new AddAssetHtmlPlugin(Object.keys(library).map(name => {
+      //     return {
+      //       filepath: require.resolve(path.resolve(`libs/package/js/${name}.${version_lib}.dll.js`)),
+      //       outputPath: 'static/lib/js',
+      //       publicPath:'./static/lib/js',
+      //       includeSourcemap: false
+      //     }
+      //   })),
+      // ]
+     
+    })
   },
   // pluginOptions:{
   // }
-  
-  // configureWebpack: config => {
-  //   if (process.env.NODE_ENV === 'production') {
-  //     // 为生产环境修改配置...
-  //   } else {
-  //     // 为开发环境修改配置...
-  //   }
-  //   return {
-  //       resolve: {
-  //           alias: {
-  //               '@components': path.resolve(__dirname, './src/components/'),
-  //               '@utils': path.resolve(__dirname, './src/utils/'),
-  //               '@styles': path.resolve(__dirname, './src/styles/'),
-  //               '@src': path.resolve(__dirname, './src/')
-  //           }
-  //       } 
-  //   }
-  // },
 }
 
 // module.exports = {
@@ -179,3 +383,60 @@ module.exports = {
   // // 可以用来传递任何第三方插件选项
   // pluginOptions: {}
 //}
+
+/* plugins */
+// const console_plugins = {
+//   VueLoaderPlugin: {},
+//   DefinePlugin: { definitions: { 'process.env': [Object] } },      
+//   CaseSensitivePathsPlugin: {
+//     options: {},
+//     logger:['log','debug'],
+//     pathCache: {},
+//     fsOperations: 0,
+//     primed: false 
+//   },
+//   FriendlyErrorsWebpackPlugin: {
+//     compilationSuccessInfo: {},
+//     onErrors: undefined,
+//     shouldClearConsole: true,
+//     formatters,
+//     transformers,
+//     previousEndTimes: {} 
+//   },
+//   MiniCssExtractPlugin: {
+//     options:{ 
+//       filename: 'css/[name].[contenthash:8].css',
+//       moduleFilename: [Function: moduleFilename],
+//       ignoreOrder: false,
+//       chunkFilename: 'css/[name].[contenthash:8].css' 
+//     } 
+//   },
+//   OptimizeCssnanoPlugin: { options: { sourceMap: false, cssnanoOptions: [Object] } },
+//   HashedModuleIdsPlugin: {
+//     options:{ 
+//        context: null,
+//        hashFunction: 'md4',
+//        hashDigest: 'hex',
+//        hashDigestLength: 4 
+//       } 
+//   },
+//   NamedChunksPlugin: { nameResolver: [Function] },
+//   HtmlWebpackPlugin: {
+//     options:
+//      { template:
+//         'xxx\\vue-component-demo\\public\\index.html',
+//        templateParameters,
+//        filename: 'index.html',
+//        hash: false,
+//        inject: true,
+//        compile: true,
+//        favicon: false,
+//        minify: [Object],
+//        cache: true,
+//        showErrors: true,
+//        chunks: 'all',
+//        excludeChunks: []
+//      }
+//   }
+// }
+
