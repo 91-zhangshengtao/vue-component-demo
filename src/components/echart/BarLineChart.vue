@@ -1,6 +1,9 @@
 <template>
-  <div class="bar-line-chart" id="bar-line-chart" ref="bar-line-chart">
-  </div>
+	<div>
+		<div class="bar-line-chart" id="bar-line-chart" ref="bar-line-chart"></div>
+		<span>{{chartData}}</span>
+	</div>
+ 
 </template>
 
 <script>
@@ -378,10 +381,18 @@ export default {
 			}
 		}
 	},
+	updated(){
+      console.log('子-updated')
+
+	},
 	mounted() {
-		console.log('mounted');
+		// console.log('子-mounted');
 		
 		this.initChart()
+	},
+	created(){
+    //   console.log('子-created')
+
 	}
 }
 </script>

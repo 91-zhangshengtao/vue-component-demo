@@ -9,6 +9,8 @@
         <el-col>
             <el-button type="primary" @click="getFetch(true)">点击请求1</el-button>
             <el-button type="primary" @click="getFetch(false)">点击请求2</el-button>
+            <el-button type="primary" @click="()=>{isSyncChange=!isSyncChange}">测试异步更新</el-button>
+            <span>{{`isSyncChange:${isSyncChange}`}}</span>
         </el-col>
     </el-row>
     <el-row>
@@ -40,7 +42,8 @@ export default {
   data() {
     return {
         chartData:{},
-        isReadyLoad:false
+        isReadyLoad:false,
+        isSyncChange: false
     }
   },
   methods:{
@@ -80,11 +83,12 @@ export default {
             let clientHeight = document.documentElement.clientHeight;
             let scrollHeight = document.body.scrollHeight;
             let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            let proLoadDis = 5; // 预设值
+            let proLoadDis = 0; // 预设值
         
-            // console.log('scrollTop:',scrollTop);
-            // console.log('clientHeight:', clientHeight)
-            // console.log('scrollHeight:',scrollHeight);
+            console.log('scrollTop:',scrollTop);
+            console.log('clientHeight:', clientHeight)
+            console.log('scrollHeight:',scrollHeight);
+            console.log('scrollTop + clientHeight:',scrollTop + clientHeight)
                 
             if ((scrollTop + clientHeight) >= (scrollHeight - proLoadDis)) {
                 if(this.isReadyLoad) return
@@ -92,9 +96,23 @@ export default {
             }
       }
   },
+  updated(){
+      console.log('父-updated')
+  },
+  created(){
+    //   console.log('父-created')
+     
+  },
   mounted() {
-      window.addEventListener('scroll', this.handleScroll);
-      setTimeout(()=>{
+    //   console.log('父-mounted')
+    //   document.documentElement.scrollTop = 0
+    // document.documentElement.scrollTop = 200
+     window.scrollTo(0, 0)
+    // document.body.scrollTop = 0
+    console.log('scrollTop：',document.documentElement.scrollTop , document.body.scrollTop)
+
+    setTimeout(()=>{
+        window.addEventListener('scroll', this.handleScroll);
         this.chartData = {
             legendData: ['板块1','key1','key2','key3'],
                 XData: ['1号','2号','3号','4号'],
@@ -105,10 +123,15 @@ export default {
                     {name:'key3',type:'line',data:[40,30,20,10]}
                 ]
         }
-      },1000)
+    },1000) 
   },
   beforeDestory(){
+     console.log('父-beforeDestory');
      window.removeEventListener('scroll', this.handleScroll);
+  },
+  destoryed(){
+      console.log('父-Destoryed');
+      
   }
 }
 </script>

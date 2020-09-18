@@ -53,5 +53,9 @@ const routes = [
 const router = new VueRouter({
   routes
 })
+// 重置页面滚动条位置
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0)
+})
 
 export default router
